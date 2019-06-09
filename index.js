@@ -212,6 +212,16 @@ $(function() {
 			// blockMove(sideblock, direction);
 			maxScore = maxScore < gameScore ? gameScore : maxScore;
 			$('#maxScore').html(maxScore);
+			var db = getCurrentDb();
+			//更新当前用户的分数
+			db.transaction(function(trans, result) {
+				trans.executeSql('UPDATE Demo SET SCORE = ? WHERE NAME = ?', [gameScore,player], function(ts, data) {
+					},
+					function(ts, message) {
+						alert(message);
+			
+					});
+			});
 			localStorage.maxScore = maxScore;
 			isNewRndblock = true;
 			return;
