@@ -71,6 +71,9 @@ function login() {
 
 			});
 	});
+	//执行sql脚本，插入数据
+
+	showAllTheData();
 }
 
 function getCurrentDb() {
@@ -79,7 +82,34 @@ function getCurrentDb() {
 	var db = openDatabase("players", "1.0", "玩家", 1024 * 1024);
 	return db;
 }
+//显示所有数据库中的数据到页面上去
+function showAllTheData() {
+	$("#rankData").empty();
+	var db = getCurrentDb();
+	db.transaction(function(trans) {
+		trans.executeSql("select * from Demo ", [], function(ts, data) {
+			if (data) {
+				for (var i = 0; i < data.rows.length; i++) {
+					appendDataToTable(data.rows.item(i)); //获取某行数据的json对象
+				}
+			}
+		}, function(ts, message) {
+			alert(message);
+			var tst = message;
+		});
+	});
+}
 
+function appendDataToTable(data) { //将数据展示到表格里面
+	var name = data.name;
+	var score = data.score;
+	var strHtml = "";
+	strHtml += "<tr>";
+	strHtml += "<td>" + name + "</td>";
+	strHtml += "<td>" + score + "</td>";
+	strHtml += "</tr>";
+	$("#rankData").append(strHtml);
+}
 
 
 function begin() {
