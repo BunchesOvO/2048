@@ -1,115 +1,235 @@
 * {
-    margin: 0;
-    padding: 0;
-    font-family: "YouYuan";
+	margin: 0;
+	padding: 0;
+	font-family: "YouYuan";
 }
 
 body {
-    background: #faf8ef;
+	background: #faf8ef;
+}
+
+#menu {
+	margin-top: 100px;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	flex-direction: column
+}
+
+#menu button {
+	width: 50%;
+	height: 100px;
+	background-color: #bbada0;
+	font-size: 35px;
+	margin-top: 50px
+}
+
+#rank {
+	display: none;
+}
+
+#rankall {
+	display: flex;
+	flex-direction: column;
+	background-color: #ede0c8
+}
+
+.input,
+.input1 {
+	height: 35px;
+	font-size: 35px
+}
+
+.rankName {
+	border: 1px solid black;
+	font-size: 35px;
+	display: flex;
+	justify-content: center
+}
+
+#addId {
+	display: none;
+	font-size: 35px;
+	margin-top: 100px;
+}
+
+#idbox {
+	display: flex;
+	justify-content: center;
+	margin-top: 20px
+}
+
+#submit {
+	margin-top: 200px;
+	width: 50%;
+	height: 100px;
+	background-color: #bbada0;
+	font-size: 35px;
+	left: 0;
+	top: 0;
+	right: 0;
+	bottom: 0;
+}
+
+#submit1 {
+	margin-top: 20px;
+	width: 50%;
+	height: 100px;
+	background-color: #bbada0;
+	font-size: 35px;
+	left: 0;
+	top: 0;
+	right: 0;
+	bottom: 0;
+}
+
+#addId button {
+	font-size: 35px;
+}
+
+#rankbox {
+	display: flex;
+	font-size: 35px
+}
+
+#rankScore,
+#rankid,
+#rankindex {
+	border: 1px solid black;
+}
+
+#rankScore li {
+	display: flex;
+	justify-content: center;
+	border-bottom-width: 1px;
+	border-bottom-style: solid;
+	border-bottom-color: black;
+}
+
+#rankScore {
+	flex-grow: 1;
+}
+
+#rankindex li {
+	display: flex;
+	justify-content: center;
+	border-bottom-width: 1px;
+	border-bottom-style: solid;
+	border-bottom-color: black;
+}
+
+#rankid li {
+	display: flex;
+	justify-content: center;
+	border-bottom-width: 1px;
+	border-bottom-style: solid;
+	border-bottom-color: black;
+	width: 250px
 }
 
 .container {
-    /*padding-top: 30px;*/
-    width: 100%;
-    height: 100%;
+	/*padding-top: 30px;*/
+	display: none;
+	width: 100%;
+	height: 100%;
 }
 
 .main {
-    width: 100%;
-    height: 100%;
-    margin: 0 auto;
-    overflow: hidden;
-    text-align: center;
+	width: 100%;
+	height: 100%;
+	margin: 0 auto;
+	overflow: hidden;
+	text-align: center;
 }
 
 .main .gameName {
-    font-size: 35px;
+	font-size: 35px;
 	font-family: "arial black";
-    font-weight: bold;
+	font-weight: bold;
 	margin-right: 25%;
 }
 
 .main .gameScore {
-    font-size: 20px;
+	font-size: 20px;
 	font-family: "arial black";
 }
 
 .main .gameScore span {
-    color: red;
-    font-weight: bold;
+	color: red;
+	font-weight: bold;
 	font-family: "arial black";
 }
 
 .main .score {
-    display: flex;
-    justify-content: space-around;
-    width: 280px;
-    margin: 0 auto;
-	
+	display: flex;
+	justify-content: space-around;
+	width: 280px;
+	margin: 0 auto;
+
 }
 
 .main .maxScore {
-    font-size: 20px;
+	font-size: 20px;
 	font-family: "arial black";
 }
 
 .main .maxScore span {
-    color: red;
-    font-weight: bold;
+	color: red;
+	font-weight: bold;
 	font-family: "arial black";
 }
 
 .main .gameBody {
-    /*width: 100%;*/
-    height: 50%;
-    margin: 0 auto;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    padding: 15px;
-    background: rgb(187, 173, 160);
-    border-radius: 8px;
-    padding-top: 5px;
-    padding-bottom: 5px;
+	/*width: 100%;*/
+	height: 50%;
+	margin: 0 auto;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+	padding: 15px;
+	background: rgb(187, 173, 160);
+	border-radius: 8px;
+	padding-top: 5px;
+	padding-bottom: 5px;
 }
 
 .main .gameBody .row {
-    display: flex;
-    justify-content: space-between;
+	display: flex;
+	justify-content: space-between;
 }
 
 .main .gameBody .row .block {
-    width: 70px;
-    height: 70px;
-    border-radius: 10px;
-    background: rgb(205, 193, 180);
-    text-align: center;
-    line-height: 70px;
-    font-size: 30px;
-    font-weight: bold;
-    margin: 5px;
-    color: #666;
-    font-family: "microsoft yahei";
+	width: 70px;
+	height: 70px;
+	border-radius: 10px;
+	background: rgb(205, 193, 180);
+	text-align: center;
+	line-height: 70px;
+	font-size: 30px;
+	font-weight: bold;
+	margin: 5px;
+	color: #666;
+	font-family: "microsoft yahei";
 }
 
 .modal {
-    margin-top: 150px;
+	margin-top: 150px;
 
 }
 
 .modal .modal-header h4 {
-    text-align: left;
-    font-weight: bold;
+	text-align: left;
+	font-weight: bold;
 }
 
 .modal .modal-dialog {
-    width: 300px;
-    margin: 0 auto;
+	width: 300px;
+	margin: 0 auto;
 
 }
 
 .modal .modal-body {
-    font-size: 18px;
-    font-weight: bold;
-    color: red;
+	font-size: 18px;
+	font-weight: bold;
+	color: red;
 }
