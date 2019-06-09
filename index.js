@@ -1,4 +1,5 @@
 var player;
+var flag=false;
 function initDatabase() {
 	var db = getCurrentDb(); //初始化数据库
 	if (!db) {
@@ -215,13 +216,25 @@ $(function() {
 			var db = getCurrentDb();
 			//更新当前用户的分数
 			db.transaction(function(trans, result) {
-				trans.executeSql('UPDATE Demo SET SCORE = ? WHERE NAME = ?', [gameScore,player], function(ts, data) {
+				trans.executeSql("select * from Demo where name=? ", [player], function(ts, data) {
+						if (data.rows.length > 0) {
+							if (data.rows.item(0).score<gameScore) {
+								// alert(1);
+								db.transaction(function(trans, result) {
+									trans.executeSql('UPDATE Demo SET SCORE = ? WHERE NAME = ?', [gameScore,player], function(ts, data) {
+										},
+										function(ts, message) {
+											alert(message);
+										});
+								});
+							}
+						}
 					},
 					function(ts, message) {
 						alert(message);
-			
 					});
 			});
+			
 			localStorage.maxScore = maxScore;
 			isNewRndblock = true;
 			return;
