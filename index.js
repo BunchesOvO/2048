@@ -16,7 +16,6 @@ function initDatabase() {
 	});
 }
 
-
 $(function() {
 	initDatabase();
 });
@@ -73,8 +72,6 @@ function login() {
 			});
 	});
 	//执行sql脚本，插入数据
-
-	showAllTheData();
 }
 
 function getCurrentDb() {
@@ -87,11 +84,20 @@ function getCurrentDb() {
 function showAllTheData() {
 	$("#rankData").empty();
 	var db = getCurrentDb();
+	var strHtml = "";
+	strHtml += "<tr>";
+	strHtml += "<td>" + "排名 + "</td>";
+	strHtml += "                                         ";
+	strHtml += "<td>" + "姓名" + "</td>";
+	strHtml += "                                         ";
+	strHtml += "<td>" + "分数" + "</td>";
+	strHtml += "</tr>";
+	$("#rankData").append(strHtml);
 	db.transaction(function(trans) {
-		trans.executeSql("select * from Demo ", [], function(ts, data) {
+		trans.executeSql("select * from Demo order by score desc ", [], function(ts, data) {
 			if (data) {
 				for (var i = 0; i < data.rows.length; i++) {
-					appendDataToTable(data.rows.item(i)); //获取某行数据的json对象
+					appendDataToTable(i,data.rows.item(i)); //获取某行数据的json对象
 				}
 			}
 		}, function(ts, message) {
@@ -101,12 +107,16 @@ function showAllTheData() {
 	});
 }
 
-function appendDataToTable(data) { //将数据展示到表格里面
+function appendDataToTable(index,data) { //将数据展示到表格里面
 	var name = data.name;
 	var score = data.score;
 	var strHtml = "";
+	index+=1;
 	strHtml += "<tr>";
+	strHtml += "<td>" + index + "</td>";
+	strHtml += "        ";
 	strHtml += "<td>" + name + "</td>";
+	strHtml += "        ";
 	strHtml += "<td>" + score + "</td>";
 	strHtml += "</tr>";
 	$("#rankData").append(strHtml);
