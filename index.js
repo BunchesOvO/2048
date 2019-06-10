@@ -86,7 +86,7 @@ function showAllTheData() {
 	var db = getCurrentDb();
 	var strHtml = "";
 	strHtml += "<tr>";
-	strHtml += "<td>" + "排名 + "</td>";
+	strHtml += "<td>" + "排名" + "</td>";
 	strHtml += "                                         ";
 	strHtml += "<td>" + "姓名" + "</td>";
 	strHtml += "                                         ";
