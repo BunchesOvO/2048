@@ -1,5 +1,7 @@
-var player;
+
 var flag=false;
+
+var player;
 function initDatabase() {
 	var db = getCurrentDb(); //初始化数据库
 	if (!db) {
@@ -149,7 +151,7 @@ $(function() {
 
 	//游戏初始化
 	gameInit();
-
+	
 
 	function refreshGame() {
 		var blocks = $('.gameBody .row .block');
@@ -223,27 +225,39 @@ $(function() {
 			// blockMove(sideblock, direction);
 			maxScore = maxScore < gameScore ? gameScore : maxScore;
 			$('#maxScore').html(maxScore);
+			player=document.getElementById('pname').innerText;
+			
 			var db = getCurrentDb();
 			//更新当前用户的分数
-			db.transaction(function(trans, result) {
-				trans.executeSql("select * from Demo where name=? ", [player], function(ts, data) {
-						if (data.rows.length > 0) {
-							if (data.rows.item(0).score<gameScore) {
-								// alert(1);
-								db.transaction(function(trans, result) {
-									trans.executeSql('UPDATE Demo SET SCORE = ? WHERE NAME = ?', [gameScore,player], function(ts, data) {
-										},
-										function(ts, message) {
-											alert(message);
-										});
-								});
-							}
-						}
-					},
-					function(ts, message) {
-						alert(message);
-					});
+			$(function(){
+				var names = player;
+				var score = gameScore;
+				$.post("http://127.0.0.1:8081/update", {
+					names: names,
+					score: score
+				}, function(res) {
+					console.log(res.msg);
+				})
 			});
+// 			db.transaction(function(trans, result) {
+// 				trans.executeSql("select * from Demo where name=? ", [player], function(ts, data) {
+// 						if (data.rows.length > 0) {
+// 							if (data.rows.item(0).score<gameScore) {
+// 								// alert(1);
+// 								db.transaction(function(trans, result) {
+// 									trans.executeSql('UPDATE Demo SET SCORE = ? WHERE NAME = ?', [gameScore,player], function(ts, data) {
+// 										},
+// 										function(ts, message) {
+// 											alert(message);
+// 										});
+// 								});
+// 							}
+// 						}
+// 					},
+// 					function(ts, message) {
+// 						alert(message);
+// 					});
+// 			});
 			
 			localStorage.maxScore = maxScore;
 			isNewRndblock = true;
