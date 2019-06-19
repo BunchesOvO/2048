@@ -228,17 +228,7 @@ $(function() {
 			player=document.getElementById('pname').innerText;
 			
 			var db = getCurrentDb();
-			//更新当前用户的分数
-			$(function(){
-				var names = player;
-				var score = gameScore;
-				$.post("http://127.0.0.1:8081/update", {
-					names: names,
-					score: score
-				}, function(res) {
-					console.log(res.msg);
-				})
-			});
+			
 // 			db.transaction(function(trans, result) {
 // 				trans.executeSql("select * from Demo where name=? ", [player], function(ts, data) {
 // 						if (data.rows.length > 0) {
@@ -318,6 +308,17 @@ $(function() {
 		} else {
 			return;
 		}
+		//更新当前用户的分数
+		$(function(){
+			var names = player;
+			var score = gameScore;
+			$.post("http://127.0.0.1:8081/update", {
+				names: names,
+				score: score
+			}, function(res) {
+				console.log(res.msg);
+			})
+		});
 		$('#gameOverModal').modal('show');
 	}
 

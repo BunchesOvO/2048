@@ -109,7 +109,7 @@ app.post('/update', urlencodedParser, function(req, res) {
 			console.log("[select error]-", err.message);
 			return;
 		} else {
-			let newscore = result[0];
+			var newscore = result[0];
 			if (newscore.score < req.body.score) {
 				connection.query(user.update, upParmas, function(err, result) {
 					if (err) {
