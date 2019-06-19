@@ -166,6 +166,7 @@ $(function() {
 		newRndblock();
 		//刷新颜色
 		refreshColor();
+		showAllTheData();
 		$('#gameOverModal').modal('hide');
 	}
 
@@ -227,28 +228,6 @@ $(function() {
 			$('#maxScore').html(maxScore);
 			player=document.getElementById('pname').innerText;
 			
-			var db = getCurrentDb();
-			
-// 			db.transaction(function(trans, result) {
-// 				trans.executeSql("select * from Demo where name=? ", [player], function(ts, data) {
-// 						if (data.rows.length > 0) {
-// 							if (data.rows.item(0).score<gameScore) {
-// 								// alert(1);
-// 								db.transaction(function(trans, result) {
-// 									trans.executeSql('UPDATE Demo SET SCORE = ? WHERE NAME = ?', [gameScore,player], function(ts, data) {
-// 										},
-// 										function(ts, message) {
-// 											alert(message);
-// 										});
-// 								});
-// 							}
-// 						}
-// 					},
-// 					function(ts, message) {
-// 						alert(message);
-// 					});
-// 			});
-			
 			localStorage.maxScore = maxScore;
 			isNewRndblock = true;
 			return;
@@ -308,6 +287,34 @@ $(function() {
 		} else {
 			return;
 		}
+		var db = getCurrentDb();
+		db.transaction(function(trans, result) {
+			trans.executeSql("select * from Demo where name=? ", [player], function(ts, data) {
+					if (data.rows.length > 0) {
+						if (data.rows.item(0).score<gameScore) {
+							// alert(1);
+							db.transaction(function(trans, result) {
+								trans.executeSql('UPDATE Demo SET SCORE = ? WHERE NAME = ?', [gameScore,player], function(ts, data) {
+								},function(ts, message) {
+									alert(message);
+								});
+							});
+						}
+					} else {
+						db.transaction(function(trans) {
+							trans.executeSql("insert into Demo(name,pwd,score) values(?,0,?) ", [player, gamescore],
+								function(ts, data) {},
+								function(ts, message) {
+									console.log(message);
+								});
+						});
+					}
+				},
+				function(ts, message) {
+					alert(message);
+		
+				});
+		});
 		//更新当前用户的分数
 		$(function(){
 			var names = player;
