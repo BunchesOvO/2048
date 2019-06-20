@@ -22,59 +22,59 @@ $(function() {
 	initDatabase();
 });
 
-function logon() {
-	var name = document.getElementsByClassName('input')[0].value;
-	var pwd = document.getElementsByClassName('input1')[0].value;
-	var score = 0;
-	var db = getCurrentDb();
-	db.transaction(function(trans, result) {
-		trans.executeSql("select * from Demo where name=? ", [name], function(ts, data) {
-				if (data.rows.length > 0) {
-					alert(name + "已存在");
-				} else {
-					db.transaction(function(trans) {
-						trans.executeSql("insert into Demo(name,pwd,score) values(?,?,?) ", [name, pwd, score],
-							function(ts, data) {},
-							function(ts, message) {
-								alert(message);
-							});
-					});
-				}
-			},
-			function(ts, message) {
-				alert(message);
+// function logon() {
+// 	var name = document.getElementsByClassName('input')[0].value;
+// 	var pwd = document.getElementsByClassName('input1')[0].value;
+// 	var score = 0;
+// 	var db = getCurrentDb();
+// 	db.transaction(function(trans, result) {
+// 		trans.executeSql("select * from Demo where name=? ", [name], function(ts, data) {
+// 				if (data.rows.length > 0) {
+// 					alert(name + "已存在");
+// 				} else {
+// 					db.transaction(function(trans) {
+// 						trans.executeSql("insert into Demo(name,pwd,score) values(?,?,?) ", [name, pwd, score],
+// 							function(ts, data) {},
+// 							function(ts, message) {
+// 								alert(message);
+// 							});
+// 					});
+// 				}
+// 			},
+// 			function(ts, message) {
+// 				alert(message);
 
-			});
-	});
-}
+// 			});
+// 	});
+// }
 
-function login() {
-	var name = document.getElementsByClassName('input')[0].value;
-	var pwd = document.getElementsByClassName('input1')[0].value;
-	var db = getCurrentDb();
-	db.transaction(function(trans, result) {
-		trans.executeSql("select * from Demo where name=? ", [name], function(ts, data) {
-				if (data.rows.length > 0) {
-					if (data.rows.item(0).pwd == pwd) {
-						player=name;
-						document.getElementById('addId').style.display = 'none',
-							document.getElementById('2048').style.display = 'flex'
-						document.getElementById('rank').style.display = 'inline'
-						showAllTheData();
-					} else {
-						alert("密码错误");
-					}
-				} else {
-					alert(name + "不存在");
-				}
-			},
-			function(ts, message) {
-				alert(message);
+// function login() {
+// 	var name = document.getElementsByClassName('input')[0].value;
+// 	var pwd = document.getElementsByClassName('input1')[0].value;
+// 	var db = getCurrentDb();
+// 	db.transaction(function(trans, result) {
+// 		trans.executeSql("select * from Demo where name=? ", [name], function(ts, data) {
+// 				if (data.rows.length > 0) {
+// 					if (data.rows.item(0).pwd == pwd) {
+// 						player=name;
+// 						document.getElementById('addId').style.display = 'none',
+// 							document.getElementById('2048').style.display = 'flex'
+// 						document.getElementById('rank').style.display = 'inline'
+// 						showAllTheData();
+// 					} else {
+// 						alert("密码错误");
+// 					}
+// 				} else {
+// 					alert(name + "不存在");
+// 				}
+// 			},
+// 			function(ts, message) {
+// 				alert(message);
 
-			});
-	});
-	//执行sql脚本，插入数据
-}
+// 			});
+// 	});
+// 	//执行sql脚本，插入数据
+// }
 
 function getCurrentDb() {
 	//打开数据库，或者直接连接数据库参数：数据库名称，版本，概述，大小
@@ -301,8 +301,10 @@ $(function() {
 							});
 						}
 					} else {
+						console.log(player);
 						db.transaction(function(trans) {
-							trans.executeSql("insert into Demo(name,pwd,score) values(?,0,?) ", [player, gamescore],
+							
+							trans.executeSql("insert into Demo(name,pwd,score) values(?,0,?) ", [player, gameScore],
 								function(ts, data) {},
 								function(ts, message) {
 									console.log(message);
