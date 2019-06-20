@@ -5,6 +5,7 @@
 		<title>2048</title>
 		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, user-scalable=no">
 		<script src="https://cdn.bootcss.com/jquery/1.11.1/jquery.min.js"></script>
+		<script src="../plugins/jquery-form.js"></script>
 		<script src="https://cdn.bootcss.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
 		<link href="https://cdn.bootcss.com/bootstrap/3.3.0/css/bootstrap.min.css" rel="stylesheet">
 		<link rel="stylesheet" type="text/css" href="index.css" />
@@ -24,6 +25,10 @@
 					<input type="text" name="names">
 					<span>请输入密码：</span>
 					<input type="password" name="passwords">
+
+
+					<!-- <input type="file" name="photos" id="photos"> -->
+
 					<!-- <ul>
 						<li>
 							<span>请输入id：</span>
@@ -40,13 +45,22 @@
 					<input class="login" type="button" value="登录" />
 				</div>
 			</form>
+			<div class="path"><span id="path"></span></div>
+			<form action="http://127.0.0.1:8081/file_upload" method="post" enctype="multipart/form-data" id="uppicture">
+				<input type="file" name="image" size="50" />
+				<br />
+				<input type="submit" value="上传文件" />
+				
+			</form>
 			
 		</div>
 
 		<div class="container" id="2048">
 			<div class="main">
 				<div class="gameName">2048</div>
-				<div class="player"><span id="pname"></span></div>
+				<div class="player"><span id="pname"></span>
+				<img src="?"  id="imgInit">
+				</div>
 				<div class="score">
 					<div class="gameScore ">得分：
 						<span id="gameScore">0</span>
@@ -116,23 +130,43 @@
 		</div>
 
 		<script type="text/javascript">
+			var photo="";
+			var type="";
 			$(function() {
+				$("#uppicture").ajaxForm(function(data) {
+					console.log(data);
+					photo=data.path;
+					type=data.type;
+					console.log(photo);
+					$('#path').html(data.path+data.type);
+					// var photo=document.getElementById('path').innerText;
+					console.log(photo);
+					console.log("str:" + JSON.stringify(data));
+				});
+
 				$(".logon").on('click', function() {
 					var names = $("input:nth-of-type(1)").val();
 					var passwords = $("input:nth-of-type(2)").val();
+					// var photo=document.getElementById('path').innerText;
+					console.log(photo);
+					// console.log($("input:nth-of-type(3)").val());
+
 					$.post("http://127.0.0.1:8081/reg", {
 						names: names,
-						passwords: passwords
+						passwords: passwords,
+						photo: photo,
+						type:type,
 					}, function(res) {
 						if (0 == res.status) {
 							alert("注册成功");
-						}else alert("账号已存在");
-						
+						} else alert("账号已存在");
+
 					})
 				});
 				$(".login").on('click', function() {
 					var names = $("input:nth-of-type(1)").val();
 					var passwords = $("input:nth-of-type(2)").val();
+					console.log(photo);
 					$.post("http://127.0.0.1:8081/login", {
 						names: names,
 						passwords: passwords
@@ -144,9 +178,12 @@
 							document.getElementById('rank').style.display = 'inline';
 							showAllTheData();
 							$('#pname').html(res.msg);
-						} else if(2 == res.status){
+							var adres='../upload/'+res.photo;
+							document.getElementById('imgInit').src = adres;
+							console.log(adres);
+						} else if (2 == res.status) {
 							alert("密码错误");
-						}else alert("账号不存在");
+						} else alert("账号不存在");
 					})
 				});
 			})
