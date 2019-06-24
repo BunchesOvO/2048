@@ -243,6 +243,26 @@ app.post('/update', urlencodedParser, function(req, res) {
 	})
 })
 
+app.post('/updateAll', urlencodedParser, function(req, res) {
+	var upParmas = [req.body.passwords,req.body.score, req.body.photo,req.body.type,req.body.names];
+	connection.query(user.updateAll, upParmas, function(err, result) {
+		if (err) {
+			console.log("[select error]-", err.message);
+			return;
+		} else {
+			res.header('Access-Control-Allow-Origin', '*');
+			res.send({
+				status: 0,
+				msg: '更新成功',
+			});
+			res.end();
+		}
+		console.log("\n\n----------更新数据-----------------------\n");
+		console.log(result);
+		console.log("\n----------更新数据ENDENDNEDNED-----------");
+	})
+})
+
 var storage = multer.diskStorage({
 	destination: function(req, file, cb) {
 		cb(null, 'upload/');

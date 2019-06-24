@@ -17,6 +17,7 @@
 </head>
 
 <body>
+<h1>用户列表</h1>
 <table class="table table-hover table-bordered" id="mytable">
 	<thead>
 		<tr>
@@ -35,10 +36,46 @@
 	<thead>
 		<tr>
 			<td><input type="checkbox" onclick="checkAll(this)"/></td>
-			<td colspan="6"><a href="javascript:;" class="btn btn-danger" role="button" onclick="delAll(this)">全部删除</a><input type="button" name="" value="更新" class="btn btn-info" id="update" /></td>
+			<td colspan="6"><a href="javascript:;" class="btn btn-danger" role="button" onclick="delAll(this)">全部删除</a>
+			 &nbsp;&nbsp;&nbsp;&nbsp;
+			<input type="button" name="" value="更新" class="btn btn-info" id="update" /></td>
 		</tr>
 	</thead>
 </table>
+<div class="edit">
+	<h1>修改数据</h1>
+	<form>
+		<table class="table table-hover table-bordered">
+			<tr>
+				<th>账号</th>
+				<td><input type="text" name="" class="form-control" id="id" /></td>
+			</tr>
+			<tr>
+				<th>密码</th>
+				<td><input type="password" name="" class="form-control" id="pwd" /></td>
+			</tr>
+			<tr>
+				<th>分数</th>
+				<td><input type="text" name="" class="form-control" id="score" /></td>
+			</tr>
+			<tr>
+				<th>头像</th>
+				<td><input type="text" name="" class="form-control" id="path" /></td>
+			</tr>
+			<tr>
+				<th>类型</th>
+				<td><input type="text" name="" class="form-control" id="type" /></td>
+			</tr>
+			<tr>
+				<td colspan="2">
+					<input type="reset" value="重置" class="btn btn-primary" id="reset" />
+					
+	                <input type="button" value="更新"  class="btn btn-info" id=""  onclick="update()" />
+				</td>
+			</tr>
+		</table>
+	</form>
+</div>
 <hr />
 <script type="text/javascript">
 	$(function() {
@@ -151,7 +188,55 @@
 			}
 		}
 	}
+	//modify功能
+	function modify(obj){
+		var oId = document.getElementById('id');
+		var oPwd = document.getElementById('pwd');
+		var oScore = document.getElementById('score');
+		var oPath = document.getElementById('path');
+		var oType = document.getElementById('type');
+		var oTr = obj.parentNode.parentNode;
+		var aTd = oTr.getElementsByTagName('td');
+		rowIndex = obj.parentNode.parentNode.rowIndex;  
+		oId.value = aTd[1].innerHTML;
+		oPwd.value = aTd[2].innerHTML;
+		oScore.value = aTd[3].innerHTML;
+		oPath.value = aTd[4].innerHTML;
+		oType.value = aTd[5].innerHTML;
+		console.log(aTd[4].innerHTML);
+		//alert(i);
 	
+	}
+	//update功能
+	function update(){
+		var oId = document.getElementById('id');
+		var oPwd = document.getElementById('pwd');
+		var oScore = document.getElementById('score');
+		var oPath = document.getElementById('path');
+		var oType = document.getElementById('type');
+		var oMytable = document.getElementById('mytable');
+		$.post("http://127.0.0.1:8081/updateAll", {
+			names: oId.value,
+			passwords: oPwd.value,
+			score: oScore.value,
+			photo: oPath.value,
+			type: oType.value
+		}, function(res) {
+			if (0 == res.status) {
+				alert("更新成功");
+			} else alert("更新失败");
+		
+		});
+		//alert(rowIndex);
+		//var aTd = rowIndex.cells;
+		console.log(oMytable.rows[rowIndex].cells)
+		oMytable.rows[rowIndex].cells[1].innerHTML = oId.value;
+		oMytable.rows[rowIndex].cells[2].innerHTML = oPwd.value;
+		oMytable.rows[rowIndex].cells[3].innerHTML = oScore.value;
+		oMytable.rows[rowIndex].cells[4].innerHTML = oPath.value;
+		oMytable.rows[rowIndex].cells[5].innerHTML = oType.value;
+		
+	}
 </script>
 
 <script>

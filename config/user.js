@@ -5,6 +5,7 @@ var user={
 	getUserById:'select * from user where id=?',
 	queryPwd:'select * from user where pwd=?',
 	update:'UPDATE user SET SCORE = ? WHERE id = ?',
+	updateAll:'UPDATE user SET pwd=?,SCORE = ?,photo=?,type=? WHERE id = ?',
 	player:'',
 };
 module.exports = user;

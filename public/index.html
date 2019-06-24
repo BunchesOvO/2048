@@ -11,7 +11,6 @@
 		<link rel="stylesheet" type="text/css" href="index.css" />
 		<script type="text/javascript" src="index.js"></script>
 		<script src="Scripts/jquery-1.5.1.js" type="text/javascript"></script>
-		<!-- <script src="/socket.io/socket.io.js"></ script> -->
 		<script src='../node_modules/socket.io-client/dist/socket.io.js'></script>
 		</script>
 
@@ -21,55 +20,54 @@
 			<button onclick="begin()">开始游戏</button>
 		</div>
 		<div id='addId'>
+			<h2>请登录您的账号</h2>
 			<form action="http://127.0.0.1:8081/reg" method="post">
 				<div id='idbox'>
-					<span>请输入id：</span>
-					<input type="text" name="names">
-					<span>请输入密码：</span>
-					<input type="password" name="passwords">
-
-
-					<!-- <input type="file" name="photos" id="photos"> -->
-
-					<!-- <ul>
-						<li>
-							<span>请输入id：</span>
-							<input type="text" name="names">
-						</li>
-						<li>
-							<span>请输入密码：</span>
-							<input type="password" name="passwords">
-						</li>
-					</ul> -->
+					<span style="text-align: center;display:block;">
+						请输入账号：
+						<input type="text" name="names">
+						<br />
+						<br />
+						请输入密码：
+						<input type="password" name="passwords"></span>
 				</div>
+
 				<div class="postbtn">
-					<input class="logon" type="button" value="注册" />
-					<input class="login" type="button" value="登录" id="login" />
+					<span style="text-align: center;display:block;"><input class="btn btn-danger" type="button" value="注册" id="reg" />
+						<input class="btn btn-info" type="button" value="登录" id="login" /></span>
 				</div>
 			</form>
-			<div class="path"><span id="path"></span></div>
 			<form action="http://127.0.0.1:8081/file_upload" method="post" enctype="multipart/form-data" id="uppicture">
-				<input type="file" name="image" size="50" />
-				<br />
-				<input type="submit" value="上传文件" />
-
+				<span style="text-align: center;display:block;">
+					<input type="file" class="btn btn-primary" name="image" size="50" />
+					<br />
+					<img src="../upload/14f19aca0b1cd1d48529f0445baa8dfd.png" id="imgUp">
+					<input type="submit" class="btn btn-success" value="上传文件" />
+				</span>
 			</form>
 
 		</div>
 
 		<div class="container" id="2048">
 			<div class="main">
-				<div class="gameName" id="gameName">2048<span class="online">
+				<div class="gameName" id="gameName">
+					<span id="name">2048</span>
+					<span class="online">
+						<span>在线:</span>
 						<span class="nums">0</span>
-						<span>:在线</span>
-					</span></div>
+					</span>
+					<span class="player">
+						<span id="pname"></span>
+						<img src="?" id="imgInit">
+					</span>
+					
+				</div>
 				<div id="content">
 					<ul class="mycont" id="cont">
 					</ul>
 				</div>
 
-				<div class="player"><span id="pname"></span>
-					<img src="?" id="imgInit">
+				<div class="player">
 				</div>
 				<div class="score">
 					<div class="gameScore ">得分：
@@ -80,7 +78,7 @@
 					</div>
 				</div>
 				<div class="col-sm-3 col-md-4"></div>
-				<div class="gameBody col-sm-6 col-md-4" id="gameBody">
+				<div class="gameBody" id="gameBody" style="text-align: center;display:block;">
 					<div class="row">
 						<div class="block emptyblock x0y0" x="0" y="0"></div>
 						<div class="block emptyblock x0y1" x="0" y="1"></div>
@@ -132,7 +130,10 @@
 			<div id='rankall'>
 				<div class='rankName'>排行榜</div>
 				<div id='rankbox'>
-					<table id="rankData">
+					<!-- <table id="rankData"> -->
+					<tbody class="listTable" id="listTable">	
+						
+					</tbody>
 				</div>
 
 				<div id='allScore'></div>
@@ -168,13 +169,13 @@
 					photo = data.path;
 					type = data.type;
 					console.log(photo);
-					$('#path').html(data.path + data.type);
-					// var photo=document.getElementById('path').innerText;
+					var adres = '../upload/' + data.path;
+					document.getElementById('imgUp').src = adres;
 					console.log(photo);
 					console.log("str:" + JSON.stringify(data));
 				});
 
-				$(".logon").on('click', function() {
+				$("#reg").on('click', function() {
 					var names = $("input:nth-of-type(1)").val();
 					var passwords = $("input:nth-of-type(2)").val();
 					// var photo=document.getElementById('path').innerText;
@@ -212,45 +213,104 @@
 							var adres = '../upload/' + res.photo;
 							document.getElementById('imgInit').src = adres;
 							console.log(adres);
+							
+							var olistTable = document.getElementById('listTable');
+							var items = document.getElementsByName("item");
+							for(var j=0;j<items.length;j++){	
+								var oParentnode = items[j].parentNode.parentNode;
+								olistTable.removeChild(oParentnode);
+								j--;
+							}
+							$.post("http://127.0.0.1:8081/show", {
+								names:'1'
+							}, function(res) {
+								if(0==res.status){
+									for(var i=0;i<res.data.length;i++){
+										var oTr = document.createElement('tr');
+										var oTd1 = document.createElement('td');
+										var oInput = document.createElement('input');
+										oTd1.appendChild(oInput);
+										oInput.setAttribute('type','checkbox');
+										oInput.setAttribute('name','item');
+										oInput.setAttribute('id',res.data[i].id);
+										var oTd2 = document.createElement('td');
+										oTd2.innerHTML = res.data[i].id;
+										var oTd3 = document.createElement('td');
+										oTd3.innerHTML = res.data[i].pwd;
+										var oTd4 = document.createElement('td');
+										oTd4.innerHTML = res.data[i].score;
+										var oTd5 = document.createElement('td');
+										oTd5.innerHTML = res.data[i].photo;
+										var oTd6 = document.createElement('td');
+										oTd6.innerHTML = res.data[i].type;
+										var oTd7 = document.createElement('td');
+										var oInput2 = document.createElement('input');
+										var oInput3 = document.createElement('input');
+										oInput2.setAttribute('type','button');
+										oInput2.setAttribute('value','删除');
+										oInput2.setAttribute('onclick','del(this)');
+										oInput2.setAttribute('id',res.data[i].id);
+										oInput2.className = 'btn btn-danger';
+										oInput3.setAttribute('type','button');
+										oInput3.setAttribute('value','修改');
+										oInput3.setAttribute('onclick','modify(this)');
+										oInput3.className = 'btn btn-info';
+										oTd7.appendChild(oInput2);
+										oTd7.appendChild(oInput3);
+										oTr.appendChild(oTd1);
+										oTr.appendChild(oTd2);
+										oTr.appendChild(oTd3);
+										oTr.appendChild(oTd4);
+										oTr.appendChild(oTd5);
+										oTr.appendChild(oTd6);
+										oTr.appendChild(oTd7);
+										var olistTable = document.getElementById('listTable');
+										olistTable.appendChild(oTr);
+								}
+									
+								}else if (2 == res.status) {
+									alert("密码错误");
+								} else alert("账号不存在");
+							})
 						} else if (2 == res.status) {
 							alert("密码错误");
 						} else alert("账号不存在");
 					});
 
-// 					var username = player;
-// 					console.log(2);
-// 					//建立socket连接
-// 					var socket = io.connect('localhost:8081');
-// 					socket.on('connect', () => {
-// 						console.log(1);
-// 						socket.emit('login', username);
-// 					});
-// 
-// 					//登录成功
-// 					socket.on('loginSuccess', () => {
-// 						console.log(3);
-// 					});
-// 
-// 					//系统广播
-// 					//参数1用户名
-// 					//参数2 在线人数
-// 					//参数3 登录还是离线
-// 					socket.on('system', (username, nums, operation) => {
-// 						$('#gameName span.nums').text(nums); //在线人数
-// 						var nowTime = forMatDate(new Date());
-// 						if (operation == 'login') {
-// 							operation = '上线了';
-// 						} else if (operation == 'logout') {
-// 							operation = '离线了';
-// 						}
-// 						var $li =
-// 							`<li class="message">
-// 												<span class="from_who">${username}</span>
-// 												<span class="time">(${nowTime}):</span>
-// 												<span class="msg">${operation}</span>
-// 													</li>`;
-// 						$('#content ul.mycont').append($($li));
-// 					});
+					// 					var username = player;
+					// 					console.log(2);
+					// 					//建立socket连接
+					// 					var socket = io.connect('localhost:8081');
+					// 					socket.on('connect', () => {
+					// 						console.log(1);
+					// 						socket.emit('login', username);
+					// 					});
+					// 
+					// 					//登录成功
+					// 					socket.on('loginSuccess', () => {
+					// 						console.log(3);
+					// 					});
+					// 
+					// 					//系统广播
+					// 					//参数1用户名
+					// 					//参数2 在线人数
+					// 					//参数3 登录还是离线
+					// 					socket.on('system', (username, nums, operation) => {
+					// 						$('#gameName span.nums').text(nums); //在线人数
+					// 						var nowTime = forMatDate(new Date());
+					// 						if (operation == 'login') {
+					// 							operation = '上线了';
+					// 						} else if (operation == 'logout') {
+					// 							operation = '离线了';
+					// 						}
+					// 						var $li =
+					// 							`<li class="message">
+					// 												<span class="from_who">${username}</span>
+					// 												<span class="time">(${nowTime}):</span>
+					// 												<span class="msg">${operation}</span>
+					// 													</li>`;
+					// 						$('#content ul.mycont').append($($li));
+					// 					});
 				});
 			})
 		</script>
