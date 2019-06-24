@@ -43,10 +43,88 @@ app.post('/reg', urlencodedParser, function(req, res) {
 			});
 			res.end();
 		}
-		console.log("\n\n----------插入數據-----------------------\n");
+		console.log("\n\n----------插入数据-----------------------\n");
 		console.log(result);
-		console.log("\n----------插入數據ENDENDNEDNED-----------");
+		console.log("\n----------插入数据ENDENDNEDNED-----------");
 	});
+	// 输出 JSON 格式
+	var response = {
+		"names": req.body.names,
+		"passwords": req.body.passwords
+	};
+
+
+})
+
+app.post('/show', urlencodedParser, function(req, res) {
+	let params = req.body;
+	connection.query(user.select, params.names, function(err, result) {
+		if (err) {
+			console.log("[select error]-", err.message);
+			return;
+		} else {
+			if (result.length == 0) {
+				res.header('Access-Control-Allow-Origin', '*');
+				res.send({
+					status: 1,
+					msg: '无用户',
+				});
+				res.end();
+			} else {
+				let response = result;
+				res.header('Access-Control-Allow-Origin', '*');
+				res.send({
+					status: 0,
+					msg: 'player',
+					data: result,
+				});
+				res.end();
+			}
+			console.log("\n\n----------查询数据-----------------------\n");
+			console.log(result);
+			console.log("\n----------查询数据ENDENDNEDNED-----------");
+		}
+	})
+
+	// 输出 JSON 格式
+	var response = {
+		"names": req.body.names,
+		"passwords": req.body.passwords
+	};
+
+
+})
+
+app.post('/delete', urlencodedParser, function(req, res) {
+	let params = req.body;
+	connection.query(user.delete, params.names, function(err, result) {
+		if (err) {
+			console.log("[select error]-", err.message);
+			return;
+		} else {
+			if (result.length == 0) {
+				res.header('Access-Control-Allow-Origin', '*');
+				res.send({
+					status: 1,
+					msg: '无用户',
+				});
+				res.end();
+			} else {
+				let response = result;
+				res.header('Access-Control-Allow-Origin', '*');
+				res.send({
+					status: 0,
+					msg: 'player',
+					data: result,
+				});
+				res.end();
+			}
+			console.log("\n\n----------查询数据-----------------------\n");
+			console.log(result);
+			console.log("\n----------查询数据ENDENDNEDNED-----------");
+		}
+	})
+
 	// 输出 JSON 格式
 	var response = {
 		"names": req.body.names,
@@ -93,9 +171,9 @@ app.post('/login', urlencodedParser, function(req, res) {
 					res.end();
 				}
 			}
-			console.log("\n\n----------查询數據-----------------------\n");
+			console.log("\n\n----------查询数据-----------------------\n");
 			console.log(result);
-			console.log("\n----------查询數據ENDENDNEDNED-----------");
+			console.log("\n----------查询数据ENDENDNEDNED-----------");
 		}
 	})
 
@@ -129,9 +207,9 @@ app.post('/update', urlencodedParser, function(req, res) {
 						});
 						res.end();
 					}
-					console.log("\n\n----------更新數據-----------------------\n");
+					console.log("\n\n----------更新数据-----------------------\n");
 					console.log(result);
-					console.log("\n----------更新數據ENDENDNEDNED-----------");
+					console.log("\n----------更新数据ENDENDNEDNED-----------");
 				})
 
 				// 输出 JSON 格式
@@ -180,20 +258,6 @@ app.post("/file_upload",upload.single("image"),function (req,res) {
         console.log(res);
     })
 });
-
-// var upload = multer({ dest: 'upload/'});
-// var type = upload.single('content')
-// 
-// 
-// app.post('/upload', type, function(req, res) {
-// 	console.log(req.files);
-// 	res.header('Access-Control-Allow-Origin', '*');
-// 	res.send({
-// 		status: 2,
-// 		msg: '更新成功',
-// 	});
-// 	res.end();
-// })
 
 var server = app.listen(8081, function() { //监听
 	var host = server.address().address
