@@ -11,7 +11,9 @@
 		<link rel="stylesheet" type="text/css" href="index.css" />
 		<script type="text/javascript" src="index.js"></script>
 		<script src="Scripts/jquery-1.5.1.js" type="text/javascript"></script>
-
+		<!-- <script src="/socket.io/socket.io.js"></ script> -->
+		<script src='../node_modules/socket.io-client/dist/socket.io.js'></script>
+		</script>
 
 	</head>
 	<body>
@@ -42,7 +44,7 @@
 				</div>
 				<div class="postbtn">
 					<input class="logon" type="button" value="注册" />
-					<input class="login" type="button" value="登录" />
+					<input class="login" type="button" value="登录" id="login" />
 				</div>
 			</form>
 			<div class="path"><span id="path"></span></div>
@@ -50,16 +52,24 @@
 				<input type="file" name="image" size="50" />
 				<br />
 				<input type="submit" value="上传文件" />
-				
+
 			</form>
-			
+
 		</div>
 
 		<div class="container" id="2048">
 			<div class="main">
-				<div class="gameName">2048</div>
+				<div class="gameName" id="gameName">2048<span class="online">
+						<span class="nums">0</span>
+						<span>:在线</span>
+					</span></div>
+				<div id="content">
+					<ul class="mycont" id="cont">
+					</ul>
+				</div>
+
 				<div class="player"><span id="pname"></span>
-				<img src="?"  id="imgInit">
+					<img src="?" id="imgInit">
 				</div>
 				<div class="score">
 					<div class="gameScore ">得分：
@@ -130,15 +140,35 @@
 		</div>
 
 		<script type="text/javascript">
-			var photo="";
-			var type="";
+			var photo = "";
+			var type = "";
+			var player;
+			// var socket = io('localhost:8081');
+			//将数字都转换为两位的
+			function num2double(number) {
+				number = (number.toString().length == 2) ? number : ('0' + number);
+				return number;
+			}
+
+			//将标准时间转换格式  08:20:08
+			function forMatDate(date) { //中国标准时间对象
+				//var year=date.getFullYear();
+				//var month=num2double(date.getMonth()+1);
+				//var dat=num2double(date.getDate());
+				var hours = num2double(date.getHours());
+				var min = num2double(date.getMinutes());
+				var sen = num2double(date.getSeconds());
+				//date=year+'/'+month+'/'+dat+' '+hours+':'+min+':'+sen;
+				date = hours + ':' + min + ':' + sen;
+				return date;
+			}
 			$(function() {
 				$("#uppicture").ajaxForm(function(data) {
 					console.log(data);
-					photo=data.path;
-					type=data.type;
+					photo = data.path;
+					type = data.type;
 					console.log(photo);
-					$('#path').html(data.path+data.type);
+					$('#path').html(data.path + data.type);
 					// var photo=document.getElementById('path').innerText;
 					console.log(photo);
 					console.log("str:" + JSON.stringify(data));
@@ -155,7 +185,7 @@
 						names: names,
 						passwords: passwords,
 						photo: photo,
-						type:type,
+						type: type,
 					}, function(res) {
 						if (0 == res.status) {
 							alert("注册成功");
@@ -163,7 +193,7 @@
 
 					})
 				});
-				$(".login").on('click', function() {
+				$("#login").click(function() {
 					var names = $("input:nth-of-type(1)").val();
 					var passwords = $("input:nth-of-type(2)").val();
 					console.log(photo);
@@ -178,13 +208,49 @@
 							document.getElementById('rank').style.display = 'inline';
 							showAllTheData();
 							$('#pname').html(res.msg);
-							var adres='../upload/'+res.photo;
+							player = res.msg;
+							var adres = '../upload/' + res.photo;
 							document.getElementById('imgInit').src = adres;
 							console.log(adres);
 						} else if (2 == res.status) {
 							alert("密码错误");
 						} else alert("账号不存在");
-					})
+					});
+
+// 					var username = player;
+// 					console.log(2);
+// 					//建立socket连接
+// 					var socket = io.connect('localhost:8081');
+// 					socket.on('connect', () => {
+// 						console.log(1);
+// 						socket.emit('login', username);
+// 					});
+// 
+// 					//登录成功
+// 					socket.on('loginSuccess', () => {
+// 						console.log(3);
+// 					});
+// 
+// 					//系统广播
+// 					//参数1用户名
+// 					//参数2 在线人数
+// 					//参数3 登录还是离线
+// 					socket.on('system', (username, nums, operation) => {
+// 						$('#gameName span.nums').text(nums); //在线人数
+// 						var nowTime = forMatDate(new Date());
+// 						if (operation == 'login') {
+// 							operation = '上线了';
+// 						} else if (operation == 'logout') {
+// 							operation = '离线了';
+// 						}
+// 						var $li =
+// 							`<li class="message">
+// 												<span class="from_who">${username}</span>
+// 												<span class="time">(${nowTime}):</span>
+// 												<span class="msg">${operation}</span>
+// 													</li>`;
+// 						$('#content ul.mycont').append($($li));
+// 					});
 				});
 			})
 		</script>

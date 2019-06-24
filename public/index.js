@@ -128,12 +128,51 @@ function appendDataToTable(index,data) { //将数据展示到表格里面
 function begin() {
 
 	document.getElementById('addId').style.display = 'flex',
-		document.getElementById('addId').style.alignItems = 'center',
-		document.getElementById('addId').style.justifyContent = 'center',
-		document.getElementById('addId').style.flexDirection = 'column',
-		document.getElementById('menu').style.display = 'none'
+	document.getElementById('addId').style.alignItems = 'center',
+	document.getElementById('addId').style.justifyContent = 'center',
+	document.getElementById('addId').style.flexDirection = 'column',
+	document.getElementById('menu').style.display = 'none'
 
 }
+
+// //点击确认后
+// $('#login').click(function(e){
+// 	
+// 	var username='123';
+// 	console.log(2);
+// 	//建立socket连接
+// 	var socket =io.connect('localhost:8848');
+// 	socket.on('connect',()=>{
+// 		console.log(1);
+// 		socket.emit('login',username);
+// 	});
+// 
+// 	//登录成功
+// 	socket.on('loginSuccess',()=>{
+// 		console.log(3);
+// 	});
+// 
+// 	//系统广播
+// 	//参数1用户名
+// 	//参数2 在线人数
+// 	//参数3 登录还是离线
+// 	socket.on('system',(username,nums,operation)=>{
+// 		$('#gameName span.nums').text(nums);  //在线人数
+// 		var nowTime=forMatDate(new Date());
+// 		if(operation=='login'){
+// 			operation='上线了';
+// 		}else if(operation=='logout'){
+// 			operation='离线了';
+// 		}
+// 		var $li=`<li class="message">
+// 					<span class="from_who">${username}</span>
+// 					<span class="time">(${nowTime}):</span>
+// 					<span class="msg">${operation}</span>
+// 				</li>`;
+// 		$('#content ul.mycont').append($($li));
+// 	});
+// 
+// });
 
 $(function() {
 	//是否产生新元素
@@ -147,7 +186,47 @@ $(function() {
 	} else {
 		maxScore = 0;
 	}
-
+	var username='有玩家';
+	console.log(2);
+	
+	//建立socket连接
+	var socket =io.connect('http://127.0.0.1:8081');
+	socket.on('connect',()=>{
+		console.log(1);
+		socket.emit('login',username);
+	});
+			
+	//登录成功
+	socket.on('loginSuccess',()=>{
+		console.log(3);
+	});
+			
+	//系统广播
+	//参数1用户名
+	//参数2 在线人数
+	//参数3 登录还是离线
+	socket.on('system',(username,nums,operation)=>{
+		$('#gameName span.nums').text(nums);  //在线人数
+		var nowTime=forMatDate(new Date());
+		if(operation=='login'){
+			operation='上线了';
+		}else if(operation=='logout'){
+			operation='离线了';
+		}
+		var olistTable = document.getElementById('cont');
+		var items = document.getElementsByName("item");
+		for(var j=0;j<items.length;j++){	
+			var oParentnode = items[j];
+			olistTable.removeChild(oParentnode);
+			j--;
+		}
+		var $li=`<li class="message" name="item">
+					<span class="time">(${nowTime})</span>
+					<span class="from_who">${username}</span>
+					<span class="msg">${operation}</span>
+				</li>`;
+		$('#content ul.mycont').append($($li));
+	});
 
 	//游戏初始化
 	gameInit();
@@ -333,6 +412,7 @@ $(function() {
 
 	//游戏初始化
 	function gameInit() {
+			
 		//初始化分数
 		$('#gameScore').html(gameScore);
 		//最大分值
@@ -423,7 +503,24 @@ $(function() {
 			}
 		}
 	}
+	//将数字都转换为两位的
+function num2double(number){
+    number=(number.toString().length==2) ? number : ('0'+number);
+    return number;
+}
 
+//将标准时间转换格式  08:20:08
+function forMatDate(date){  //中国标准时间对象
+    //var year=date.getFullYear();
+    //var month=num2double(date.getMonth()+1);
+    //var dat=num2double(date.getDate());
+    var hours=num2double(date.getHours());
+    var min=num2double(date.getMinutes());
+    var sen=num2double(date.getSeconds());
+    //date=year+'/'+month+'/'+dat+' '+hours+':'+min+':'+sen;
+    date=hours+':'+min+':'+sen;
+    return date;
+}
 	// 电脑的方向键监听事件
 	$('body').keydown(function(e) {
 		switch (e.keyCode) {
@@ -458,97 +555,97 @@ $(function() {
 		}
 	});
 
-	// 手机屏幕划动触发
-	(function() {
-		mobilwmtouch(document.getElementById("gameBody"))
-		document.getElementById("gameBody").addEventListener('touright', function(e) {
-			e.preventDefault();
-			// alert("方向向右");
-			console.log('right');
-			isNewRndblock = false;
-			move('right');
-			isGameOver();
-		});
-		document.getElementById("gameBody").addEventListener('touleft', function(e) {
-			// alert("方向向左");
-			console.log('left');
-			isNewRndblock = false;
-			move('left');
-			isGameOver();
-		});
-		document.getElementById("gameBody").addEventListener('toudown', function(e) {
-			// alert("方向向下");
-			console.log('down');
-			isNewRndblock = false;
-			move('down');
-			isGameOver();
-		});
-		document.getElementById("gameBody").addEventListener('touup', function(e) {
-			// alert("方向向上");
-			console.log('up');
-			isNewRndblock = false;
-			move('up');
-			isGameOver();
-		});
-
-		function mobilwmtouch(obj) {
-			var stoux, stouy;
-			var etoux, etouy;
-			var xdire, ydire;
-			obj.addEventListener("touchstart", function(e) {
-				stoux = e.targetTouches[0].clientX;
-				stouy = e.targetTouches[0].clientY;
-				//console.log(stoux);
-			}, false);
-			obj.addEventListener("touchend", function(e) {
-				etoux = e.changedTouches[0].clientX;
-				etouy = e.changedTouches[0].clientY;
-				xdire = etoux - stoux;
-				ydire = etouy - stouy;
-				chazhi = Math.abs(xdire) - Math.abs(ydire);
-				//console.log(ydire);
-				if (xdire > 0 && chazhi > 0) {
-					console.log("right");
-					//alert(evenzc('touright',alerts));
-					obj.dispatchEvent(evenzc('touright'));
-
-				} else if (ydire > 0 && chazhi < 0) {
-					console.log("down");
-					obj.dispatchEvent(evenzc('toudown'));
-				} else if (xdire < 0 && chazhi > 0) {
-					console.log("left");
-					obj.dispatchEvent(evenzc('touleft'));
-				} else if (ydire < 0 && chazhi < 0) {
-					console.log("up");
-					obj.dispatchEvent(evenzc('touup'));
-				}
-			}, false);
-
-			function evenzc(eve) {
-				if (typeof document.CustomEvent === 'function') {
-
-					this.event = new document.CustomEvent(eve, { //自定义事件名称
-						bubbles: false, //是否冒泡
-						cancelable: false //是否可以停止捕获
-					});
-					if (!document["evetself" + eve]) {
-						document["evetself" + eve] = this.event;
-					}
-				} else if (typeof document.createEvent === 'function') {
-
-
-					this.event = document.createEvent('HTMLEvents');
-					this.event.initEvent(eve, false, false);
-					if (!document["evetself" + eve]) {
-						document["evetself" + eve] = this.event;
-					}
-				} else {
-					return false;
-				}
-
-				return document["evetself" + eve];
-
-			}
-		}
-	})();
+// 	// 手机屏幕划动触发
+// 	(function() {
+// 		mobilwmtouch(document.getElementById("gameBody"))
+// 		document.getElementById("gameBody").addEventListener('touright', function(e) {
+// 			e.preventDefault();
+// 			// alert("方向向右");
+// 			console.log('right');
+// 			isNewRndblock = false;
+// 			move('right');
+// 			isGameOver();
+// 		});
+// 		document.getElementById("gameBody").addEventListener('touleft', function(e) {
+// 			// alert("方向向左");
+// 			console.log('left');
+// 			isNewRndblock = false;
+// 			move('left');
+// 			isGameOver();
+// 		});
+// 		document.getElementById("gameBody").addEventListener('toudown', function(e) {
+// 			// alert("方向向下");
+// 			console.log('down');
+// 			isNewRndblock = false;
+// 			move('down');
+// 			isGameOver();
+// 		});
+// 		document.getElementById("gameBody").addEventListener('touup', function(e) {
+// 			// alert("方向向上");
+// 			console.log('up');
+// 			isNewRndblock = false;
+// 			move('up');
+// 			isGameOver();
+// 		});
+// 
+// 		function mobilwmtouch(obj) {
+// 			var stoux, stouy;
+// 			var etoux, etouy;
+// 			var xdire, ydire;
+// 			obj.addEventListener("touchstart", function(e) {
+// 				stoux = e.targetTouches[0].clientX;
+// 				stouy = e.targetTouches[0].clientY;
+// 				//console.log(stoux);
+// 			}, false);
+// 			obj.addEventListener("touchend", function(e) {
+// 				etoux = e.changedTouches[0].clientX;
+// 				etouy = e.changedTouches[0].clientY;
+// 				xdire = etoux - stoux;
+// 				ydire = etouy - stouy;
+// 				chazhi = Math.abs(xdire) - Math.abs(ydire);
+// 				//console.log(ydire);
+// 				if (xdire > 0 && chazhi > 0) {
+// 					console.log("right");
+// 					//alert(evenzc('touright',alerts));
+// 					obj.dispatchEvent(evenzc('touright'));
+// 
+// 				} else if (ydire > 0 && chazhi < 0) {
+// 					console.log("down");
+// 					obj.dispatchEvent(evenzc('toudown'));
+// 				} else if (xdire < 0 && chazhi > 0) {
+// 					console.log("left");
+// 					obj.dispatchEvent(evenzc('touleft'));
+// 				} else if (ydire < 0 && chazhi < 0) {
+// 					console.log("up");
+// 					obj.dispatchEvent(evenzc('touup'));
+// 				}
+// 			}, false);
+// 
+// 			function evenzc(eve) {
+// 				if (typeof document.CustomEvent === 'function') {
+// 
+// 					this.event = new document.CustomEvent(eve, { //自定义事件名称
+// 						bubbles: false, //是否冒泡
+// 						cancelable: false //是否可以停止捕获
+// 					});
+// 					if (!document["evetself" + eve]) {
+// 						document["evetself" + eve] = this.event;
+// 					}
+// 				} else if (typeof document.createEvent === 'function') {
+// 
+// 
+// 					this.event = document.createEvent('HTMLEvents');
+// 					this.event.initEvent(eve, false, false);
+// 					if (!document["evetself" + eve]) {
+// 						document["evetself" + eve] = this.event;
+// 					}
+// 				} else {
+// 					return false;
+// 				}
+// 
+// 				return document["evetself" + eve];
+// 
+// 			}
+// 		}
+// 	})();
 });

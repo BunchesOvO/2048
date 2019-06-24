@@ -3,20 +3,57 @@ var app = express();
 var bodyParser = require('body-parser');
 var fs = require("fs");
 var multer = require("multer");
+const server = require('http').createServer(app);
+const io = require('socket.io').listen(server);
+const _ = require('underscore');
 const mysql = require('mysql');
 var db = require('./config/db');
 var user = require('./config/user');
 var connection = mysql.createConnection(db.mysql);
 connection.connect();
 var flag = 0;
-var player,type,photo;
+var player, type, photo;
 
 module.exports = player;
 
+server.listen(8081, (err) => {
+	if (err)
+		throw err;
+	else {
+		console.log('成功监听8081端口');
+	}
+});
 var urlencodedParser = bodyParser.urlencoded({
 	extended: false
 })
+// io.on('connection', function(socket) {
+// 	console.log('a user connected');
+// 	socket.on('disconnect', function() {
+// 		console.log('user disconnected');
+// 	});
+// });
 
+
+
+
+io.on('connection',(socket)=>{
+	//用户登录
+	socket.on('login',(username)=>{
+			socket.nickname=username;
+			socket.emit('loginSuccess');   //登录成功
+			var nums=io.eio.clientsCount;  //在线人数
+			io.sockets.emit('system',username,nums,'login');
+	});
+
+	//用户断开连接
+	socket.on('disconnect',()=>{
+		if(socket.nickname!= null){
+			var nums=io.eio.clientsCount;  //在线人数
+			socket.broadcast.emit('system',socket.nickname,nums,'logout')
+		}
+	});
+	
+});
 app.use(express.static('public'));
 
 app.get('/index.html', function(req, res) {
@@ -24,7 +61,7 @@ app.get('/index.html', function(req, res) {
 })
 
 app.post('/reg', urlencodedParser, function(req, res) {
-	var addParmas = [req.body.names, req.body.passwords,req.body.photo,req.body.type];
+	var addParmas = [req.body.names, req.body.passwords, req.body.photo, req.body.type];
 	connection.query(user.insert, addParmas, function(err, result) {
 		if (err) {
 			console.log("[select error]-", err.message);
@@ -85,14 +122,6 @@ app.post('/show', urlencodedParser, function(req, res) {
 			console.log("\n----------查询数据ENDENDNEDNED-----------");
 		}
 	})
-
-	// 输出 JSON 格式
-	var response = {
-		"names": req.body.names,
-		"passwords": req.body.passwords
-	};
-
-
 })
 
 app.post('/delete', urlencodedParser, function(req, res) {
@@ -124,14 +153,6 @@ app.post('/delete', urlencodedParser, function(req, res) {
 			console.log("\n----------查询数据ENDENDNEDNED-----------");
 		}
 	})
-
-	// 输出 JSON 格式
-	var response = {
-		"names": req.body.names,
-		"passwords": req.body.passwords
-	};
-
-
 })
 
 app.post('/login', urlencodedParser, function(req, res) {
@@ -152,14 +173,14 @@ app.post('/login', urlencodedParser, function(req, res) {
 				let response = result[0];
 				if (response.pwd == params.passwords) {
 					player = params.names;
-					type=response.type;
-					photo=response.photo;
+					type = response.type;
+					photo = response.photo;
 					res.header('Access-Control-Allow-Origin', '*');
 					res.send({
 						status: 0,
 						msg: player,
-						photo:photo,
-						type:type,
+						photo: photo,
+						type: type,
 					});
 					res.end();
 				} else {
@@ -223,44 +244,45 @@ app.post('/update', urlencodedParser, function(req, res) {
 })
 
 var storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, 'upload/');
-  },
-  filename: function (req, file, cb) {
-    cb(null, file.originalname);
-  }
+	destination: function(req, file, cb) {
+		cb(null, 'upload/');
+	},
+	filename: function(req, file, cb) {
+		cb(null, file.originalname);
+	}
 });
 
-var upload = multer({ storage: storage });
+var upload = multer({
+	storage: storage
+});
 // app.use(multer({dest:"upload/"}).array("image"));
- 
-app.post("/file_upload",upload.single("image"),function (req,res) {
-    console.log(req.file);
-    var des_file = __dirname + "/" + req.file.originalname;
-	var type="";
-	if(req.file.mimetype=='image/jpeg'){
-		type='.jpg';
+
+app.post("/file_upload", upload.single("image"), function(req, res) {
+	console.log(req.file);
+	var des_file = __dirname + "/" + req.file.originalname;
+	var type = "";
+	if (req.file.mimetype == 'image/jpeg') {
+		type = '.jpg';
+	} else {
+		type = '.png';
 	}
-	else{
-		type='.png';
-	}
-    fs.readFile(req.file.path, function (err , data) {
-        if (err){
-            console.log(err);
-        }else {
+	fs.readFile(req.file.path, function(err, data) {
+		if (err) {
+			console.log(err);
+		} else {
 			res.header('Access-Control-Allow-Origin', '*');
 			res.send({
-				path:req.file.originalname,
-				type:type,
+				path: req.file.originalname,
+				type: type,
 			});
 			res.end();
-        }
-        console.log(res);
-    })
+		}
+		console.log(res);
+	})
 });
 
-var server = app.listen(8081, function() { //监听
-	var host = server.address().address
-	var port = server.address().port
-	console.log("应用实例，访问地址为 http://%s:%s", host, port)
-})
+// var server2 = app.listen(8081, function() { //监听
+// 	var host = server2.address().address
+// 	var port = server2.address().port
+// 	console.log("应用实例，访问地址为 http://%s:%s", host, port)
+// })
