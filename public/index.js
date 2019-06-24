@@ -88,14 +88,15 @@ function showAllTheData() {
 	var db = getCurrentDb();
 	var strHtml = "";
 	strHtml += "<tr>";
-	strHtml += "<td>" + "排名" + "</td>";
+	strHtml += "<td>"+"&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" + "排名"+"&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"+ "</td>";
 	strHtml += "                                         ";
-	strHtml += "<td>" + "姓名" + "</td>";
+	strHtml += "<td>" + "姓名" +"&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"+ "</td>";
 	strHtml += "                                         ";
-	strHtml += "<td>" + "分数" + "</td>";
+	strHtml += "<td>" + "分数"+"&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" + "</td>";
 	strHtml += "</tr>";
 	$("#rankData").append(strHtml);
 	db.transaction(function(trans) {
+		// trans.executeSql("drop table Demo", [], function(ts, data) {
 		trans.executeSql("select * from Demo order by score desc ", [], function(ts, data) {
 			if (data) {
 				for (var i = 0; i < data.rows.length; i++) {
@@ -115,7 +116,7 @@ function appendDataToTable(index,data) { //将数据展示到表格里面
 	var strHtml = "";
 	index+=1;
 	strHtml += "<tr>";
-	strHtml += "<td>" + index + "</td>";
+	strHtml += "<td>"+"&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" + index + "</td>";
 	strHtml += "        ";
 	strHtml += "<td>" + name + "</td>";
 	strHtml += "        ";
@@ -382,7 +383,7 @@ $(function() {
 					} else {
 						console.log(player);
 						db.transaction(function(trans) {
-							
+							// trans.executeSql("delet * from Demo", [player, gameScore],
 							trans.executeSql("insert into Demo(name,pwd,score) values(?,0,?) ", [player, gameScore],
 								function(ts, data) {},
 								function(ts, message) {

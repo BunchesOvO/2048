@@ -57,7 +57,7 @@
 						<span class="nums">0</span>
 					</span>
 					<span class="player">
-						<span id="pname"></span>
+						玩家<span id="pname"></span>
 						<img src="?" id="imgInit">
 					</span>
 					
@@ -130,10 +130,7 @@
 			<div id='rankall'>
 				<div class='rankName'>排行榜</div>
 				<div id='rankbox'>
-					<!-- <table id="rankData"> -->
-					<tbody class="listTable" id="listTable">	
-						
-					</tbody>
+					<table id="rankData">
 				</div>
 
 				<div id='allScore'></div>
@@ -213,65 +210,6 @@
 							var adres = '../upload/' + res.photo;
 							document.getElementById('imgInit').src = adres;
 							console.log(adres);
-							
-							var olistTable = document.getElementById('listTable');
-							var items = document.getElementsByName("item");
-							for(var j=0;j<items.length;j++){	
-								var oParentnode = items[j].parentNode.parentNode;
-								olistTable.removeChild(oParentnode);
-								j--;
-							}
-							$.post("http://127.0.0.1:8081/show", {
-								names:'1'
-							}, function(res) {
-								if(0==res.status){
-									for(var i=0;i<res.data.length;i++){
-										var oTr = document.createElement('tr');
-										var oTd1 = document.createElement('td');
-										var oInput = document.createElement('input');
-										oTd1.appendChild(oInput);
-										oInput.setAttribute('type','checkbox');
-										oInput.setAttribute('name','item');
-										oInput.setAttribute('id',res.data[i].id);
-										var oTd2 = document.createElement('td');
-										oTd2.innerHTML = res.data[i].id;
-										var oTd3 = document.createElement('td');
-										oTd3.innerHTML = res.data[i].pwd;
-										var oTd4 = document.createElement('td');
-										oTd4.innerHTML = res.data[i].score;
-										var oTd5 = document.createElement('td');
-										oTd5.innerHTML = res.data[i].photo;
-										var oTd6 = document.createElement('td');
-										oTd6.innerHTML = res.data[i].type;
-										var oTd7 = document.createElement('td');
-										var oInput2 = document.createElement('input');
-										var oInput3 = document.createElement('input');
-										oInput2.setAttribute('type','button');
-										oInput2.setAttribute('value','删除');
-										oInput2.setAttribute('onclick','del(this)');
-										oInput2.setAttribute('id',res.data[i].id);
-										oInput2.className = 'btn btn-danger';
-										oInput3.setAttribute('type','button');
-										oInput3.setAttribute('value','修改');
-										oInput3.setAttribute('onclick','modify(this)');
-										oInput3.className = 'btn btn-info';
-										oTd7.appendChild(oInput2);
-										oTd7.appendChild(oInput3);
-										oTr.appendChild(oTd1);
-										oTr.appendChild(oTd2);
-										oTr.appendChild(oTd3);
-										oTr.appendChild(oTd4);
-										oTr.appendChild(oTd5);
-										oTr.appendChild(oTd6);
-										oTr.appendChild(oTd7);
-										var olistTable = document.getElementById('listTable');
-										olistTable.appendChild(oTr);
-								}
-									
-								}else if (2 == res.status) {
-									alert("密码错误");
-								} else alert("账号不存在");
-							})
 						} else if (2 == res.status) {
 							alert("密码错误");
 						} else alert("账号不存在");
